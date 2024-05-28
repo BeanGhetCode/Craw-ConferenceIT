@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Conference Management</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="container-fluid d-none d-lg-block">
+        <div class="row align-items-center bg-white py-3 px-lg-5">
+            <div class="col-lg-4">
+                <a href="/" class="navbar-brand p-0 d-none d-lg-block">
+                    <h1 class="m-0 display-4 text-uppercase text-primary">Conference <span href="/" class="text-secondary font-weight-normal">Management </span></h1>
+                </a>
+            </div>
+        </div>
+    </div>
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg navbar-light bg-light">
+  <div class="container-fluid">
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav">
+        <li class="nav-item">
+          <a class="nav-link active" aria-current="page" href="#">Home</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#">User</a>
+        </li>
+      </ul>
+      <div class="btn-group ms-auto" role="group">
+        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#loginModal">
+          Login
+        </button>
+        <button type="button" class="btn btn-secondary" id="createUserBtn" data-bs-toggle="modal" data-bs-target="#createUserModal" style="display: none;">
+          Create User
+        </button>
+        <button type="button" class="btn btn-secondary" id="userBtn" style="display: none;">User</button>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- JavaScript -->
+<script>
+  // Mock login status (true if user is logged in, false otherwise)
+  let isLoggedIn = false;
+
+  // Function to toggle user button visibility based on login status
+  function toggleUserButton() {
+    const userBtn = document.getElementById('userBtn');
+    const createUserBtn = document.getElementById('createUserBtn');
+    if (isLoggedIn) {
+      userBtn.style.display = 'block';
+      createUserBtn.style.display = 'none';
+    } else {
+      userBtn.style.display = 'none';
+      createUserBtn.style.display = 'block';
+    }
+  }
+
+  // Check login status on page load
+  window.addEventListener('DOMContentLoaded', function () {
+    toggleUserButton();
+  });
+
+  // Mock login function
+  function login() {
+    isLoggedIn = true; // Set login status to true
+    toggleUserButton(); // Toggle user button visibility
+    // Add your login logic here (e.g., sending login request to server)
+  }
+
+  // Mock logout function
+  function logout() {
+    isLoggedIn = false; // Set login status to false
+    toggleUserButton(); // Toggle user button visibility
+    // Add your logout logic here (e.g., sending logout request to server)
+  }
+</script>
+  <!-- Create User Modal -->
+  <div class="modal fade" id="createUserModal" tabindex="-1" aria-labelledby="createUserModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="createUserModalLabel">Create User</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form id="createUserForm">
+          <div class="mb-3">
+            <label for="createUserName" class="form-label">Name</label>
+            <input type="text" class="form-control" id="createUserName" required>
+          </div>
+          <div class="mb-3">
+            <label for="createUserEmail" class="form-label">Email address</label>
+            <input type="email" class="form-control" id="createUserEmail" required>
+          </div>
+          <div class="mb-3">
+            <label for="createUserPassword" class="form-label">Password</label>
+            <input type="password" class="form-control" id="createUserPassword" required>
+          </div>
+          <button type="submit" class="btn btn-primary">Create User</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+  <div class="container mt-5">
+    <!-- Login Modal -->
+    <div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="loginModalLabel">Login</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <form id="loginForm">
+              <div class="mb-3">
+                <label for="email" class="form-label">Email</label>
+                <input type="email" class="form-control" id="email" required>
+              </div>
+              <div class="mb-3">
+                <label for="password" class="form-label">Password</label>
+                <input type="password" class="form-control" id="password" required>
+              </div>
+              <button type="submit" class="btn btn-primary w-100">Login</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    
+    <!-- Conference Filter and Search -->
+    <div class="row mb-4">
+      <div class="col-md-4">
+        <label for="topicFilter" class="form-label">Filter by Topic</label>
+        <select class="form-select" id="topicFilter">
+          <option value="">All Topics</option>
+          <!-- Dynamic topics will be added here -->
+        </select>
+      </div>
+      <div class="col-md-8">
+        <label for="search" class="form-label">Search Conferences</label>
+        <input type="text" class="form-control" id="search" placeholder="Enter conference name">
+      </div>
+    </div>
+
+    <!-- Conference Table -->
+    {{{body}}}
+  </div>
+
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="scripts.js"></script>
+</body>
+</html>

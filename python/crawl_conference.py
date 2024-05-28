@@ -3,7 +3,7 @@ from bs4 import BeautifulSoup
 import psycopg2
 import json
 
-# Function to fetch topics from the database
+# Function to fetch topics from the database along with URLs
 def fetch_topics():
     conn = psycopg2.connect(
         dbname="conferenceDB",
@@ -33,20 +33,9 @@ def scrape_data(url, topic_id):
         script_tag = conference_item.find('script', type='application/ld+json')
         if script_tag:
             json_data = json.loads(script_tag.string)
-            conference_details['name'] = json_data.get('name', 'N/A')
-            conference_details['startDate'] = json_data.get('startDate', 'N/A')
-            conference_details['url'] = json_data.get('url', 'N/A')
-        else:
-            conference_details['name'] = 'N/A'
-            conference_details['startDate'] = 'N/A'
-            conference_details['url'] = 'N/A'
-
-        # Lấy ngày hội nghị từ thẻ <time>
-        time_tag = conference_item.find('time', class_='has-text-weight-bold is-size-7-mobile has-text-grey-dark')
-        if time_tag:
-            conference_details['date'] = time_tag.get_text(strip=True)
-        else:
-            conference_details['date'] = 'N/A'
+            conference_details['name'] = json_data.get('name', None)
+            conference_details['startDate'] = json_data.get('startDate', None)
+            conference_details['url'] = json_data.get('url', None)
 
         # Lấy mô tả từ thẻ <h3>
         subtitle_element = conference_item.find('h3', class_='subtitle is-6 is-size-7-mobile')
@@ -55,12 +44,15 @@ def scrape_data(url, topic_id):
             if len(a_tags) >= 2:
                 conference_details['location'] = a_tags[1].text.strip()
             else:
-                conference_details['location'] = 'N/A'
+                conference_details['location'] = None
         else:
-            conference_details['location'] = 'N/A'
+            conference_details['location'] = None
 
-        conference_details['topic_id'] = topic_id  # Include topic ID
-        conference_data.append(conference_details)
+        conference_details['topic_id'] = topic_id  
+
+        # Only append details if all fields are valid (not None)
+        if all(conference_details.values()):
+            conference_data.append(conference_details)
 
     return conference_data
 
@@ -74,16 +66,16 @@ conn = psycopg2.connect(
 )
 cur = conn.cursor()
 
-# Create table if not exists
+# Create table if not exists with foreign key constraint
 create_table_query = '''
 CREATE TABLE IF NOT EXISTS conferences (
     id SERIAL PRIMARY KEY,
     name TEXT,
     start_date TEXT,
     url TEXT,
-    date TEXT,
     location TEXT,
-    topic_id INTEGER
+    topic_id INTEGER,
+    FOREIGN KEY (topic_id) REFERENCES topics (id)
 );
 '''
 cur.execute(create_table_query)
@@ -91,8 +83,9 @@ conn.commit()
 
 # Insert data into the table
 insert_query = '''
-INSERT INTO conferences (name, start_date, url, date, location, topic_id)
-VALUES (%s, %s, %s, %s, %s, %s);
+INSERT INTO conferences (name, start_date, url, location, topic_id)
+VALUES (%s, %s, %s, %s, %s)
+RETURNING id;
 '''
 
 # Fetch topics from the database
@@ -109,9 +102,8 @@ for topic_id, topic_name, topic_url in topics:
             conference['name'],
             conference['startDate'],
             conference['url'],
-            conference['date'],
             conference['location'],
-            conference['topic_id'] 
+            conference['topic_id']
         ))
     conn.commit()
 

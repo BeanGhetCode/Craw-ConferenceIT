@@ -1,0 +1,22 @@
+<table id="conferenceTable" class="table">
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Start Date</th>
+      <th>Location</th>
+      <th>Topic</th>
+      <th>Deadline</th>
+    </tr>
+  </thead>
+  <tbody>
+    {{#each conferences}}
+    <tr>
+      <td><a href="{{url}}" target="_blank">{{name}}</a></td>
+      <td>{{formatDateTime start_date}}</td>
+      <td>{{location}}</td>
+      <td>{{Topic.name}}</td>
+      <td>{{calculateDeadline start_date}} day</td>
+    </tr>
+    {{/each}}
+  </tbody>
+</table>
