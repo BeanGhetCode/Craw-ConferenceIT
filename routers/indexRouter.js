@@ -5,7 +5,6 @@ const router = express.Router();
 const controller = require('../controllers/indexController');
 
 router.get('/', controller.showHomepage);
-
-//router.get('/:page', controller.showPage);
+router.post('/addToFollowList', controller.addToFollowList);
 
 module.exports = router;

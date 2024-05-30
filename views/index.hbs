@@ -1,4 +1,5 @@
-<table id="conferenceTable" class="table">
+ <div class="container" >
+    <table id="conferenceTable" class="table">
   <thead>
     <tr>
       <th>Name</th>
@@ -6,6 +7,7 @@
       <th>Location</th>
       <th>Topic</th>
       <th>Deadline</th>
+      <th>Add to Follow List</th>
     </tr>
   </thead>
   <tbody>
@@ -16,7 +18,17 @@
       <td>{{location}}</td>
       <td>{{Topic.name}}</td>
       <td>{{calculateDeadline start_date}} day</td>
+      <td>
+        <form action="/addToFollowList" method="post">
+          <input type="hidden" name="conference_id" value="{{id}}">
+          <input type="hidden" name="user_id" value="{{req.query.id}}">
+          <button type="submit" class="btn btn-primary">Add</button>
+      </form>
+
+      </td>
     </tr>
     {{/each}}
   </tbody>
 </table>
+ </div>
+
