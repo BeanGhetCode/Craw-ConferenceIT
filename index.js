@@ -23,6 +23,24 @@ const helpers = {
     }
 };
 
+const setLocals = (req, res, next) => {
+    // Kiểm tra xem session đã được thiết lập chưa và có chứa thông tin người dùng không
+    if (req.session && req.session.user) {
+        
+        // Nếu có, thiết lập các biến cục bộ với các giá trị từ session
+        res.locals.isLoggedIn = true;
+        res.locals.userId = req.session.user.id;
+        res.locals.fullname = req.session.user.fullname;
+    } else {
+        // Nếu không, thiết lập các biến cục bộ với giá trị mặc định
+        res.locals.isLoggedIn = false;
+        res.locals.userId = null;
+        res.locals.fullname = null;
+    }
+    next();
+};
+
+
 app.engine('hbs', expressHbs.engine({
     layoutsDir: __dirname + '/views/layouts',
     defaultLayout: 'layout',
@@ -41,7 +59,7 @@ app.set('view engine', 'hbs');
 app.use(bodyParser.urlencoded({ extended: true }));
 
 // Cấu hình session middleware
-app.use(session({
+app.use(session({   
     secret: '090899', 
     resave: false,
     saveUninitialized: true,
@@ -51,9 +69,9 @@ app.use (passport.initialize());
 app.use (passport.session());
 app.use(flash());
 
-
-
-app.use('/', require('./routers/indexRouter'));
+app.use(setLocals);
 app.use('/user', require('./routers/userRouter'));
+app.use('/', require('./routers/indexRouter'));
+
 
 app.listen(port, () => console.log(`Example app listening on port ${port}!`));

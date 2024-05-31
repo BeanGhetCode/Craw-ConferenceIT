@@ -31,7 +31,7 @@ module.exports = (sequelize, DataTypes) => {
 
   Conference.associate = (models) => {
     Conference.belongsTo(models.Topic, { foreignKey: 'topic_id' });
-    Conference.hasMany(models.FollowList, { foreignKey: 'conference_id' });
+    Conference.hasMany(models.FollowList, { foreignKey: 'id_conference' });
   };
 
   return Conference;

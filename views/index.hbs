@@ -31,38 +31,49 @@
 </div>
    
     <table id="conferenceTable" class="table">
-        <thead>
+    <thead>
+        <tr>
+            <th>Name <a href="?sort=nameAsc">▲</a> <a href="?sort=nameDesc">▼</a></th>
+            <th>Start Date <a href="?sort=dateAsc">▲</a> <a href="?sort=dateDesc">▼</a></th>
+            <th>Location <a href="?sort=locationAsc">▲</a> <a href="?sort=locationDesc">▼</a></th>
+            <th>Topic <a href="?sort=topicAsc">▲</a> <a href="?sort=topicDesc">▼</a></th>
+            <th>Deadline <a href="?sort=deadlineAsc">▲</a> <a href="?sort=deadlineDesc">▼</a></th>
+            <th>Add to Follow List</th> <!-- Thêm cột mới -->
+        </tr>
+    </thead>
+    <tbody>
+        {{#if isLoggedIn}}
+        {{#each conferences}}
+        <tr>
+            <td><a href="{{url}}" target="_blank">{{name}}</a></td>
+            <td>{{formatDateTime start_date}}</td>
+            <td>{{location}}</td>
+            <td>{{Topic.name}}</td>
+            <td>{{calculateDeadline start_date}} day</td>
+            
+            <td> <!-- Chỉ hiển thị nút khi isLoggedIn là true -->
+                <form action="/addToFollowList" method="post">
+                    <input type="hidden" name="conference_id" value="{{id}}">
+                    <input type="hidden" name="user_id" value="{{req.query.id}}">
+                    <button type="submit" class="btn btn-primary">Add</button>
+                </form>
+            </td>
+        {{/each}}
+        {{else}}
+        {{#each conferences}}
             <tr>
-                <th>Name <a href="?sort=nameAsc">▲</a> <a href="?sort=nameDesc">▼</a></th>
-                <th>Start Date <a href="?sort=dateAsc">▲</a> <a href="?sort=dateDesc">▼</a></th>
-                <th>Location <a href="?sort=locationAsc">▲</a> <a href="?sort=locationDesc">▼</a></th>
-                <th>Topic <a href="?sort=topicAsc">▲</a> <a href="?sort=topicDesc">▼</a></th>
-                <th>Deadline <a href="?sort=deadlineAsc">▲</a> <a href="?sort=deadlineDesc">▼</a></th>
-                <th>Add to Follow List</th>
-            </tr>
-        </thead>
-        <tbody>
-            {{#each conferences}}
-            <tr>
-                <td><a href="{{url}}" target="_blank">{{name}}</a></td>
-                <td>{{formatDateTime start_date}}</td>
-                <td>{{location}}</td>
-                <td>{{Topic.name}}</td>
-                
-                <td>{{calculateDeadline start_date}} day</td>
-                {{#if isLoggedIn}}
-                <td>
-                    <form action="/addToFollowList" method="post">
-                        <input type="hidden" name="conference_id" value="{{id}}">
-                        <input type="hidden" name="user_id" value="{{req.query.id}}">
-                        <button type="submit" class="btn btn-primary">Add</button>
-                    </form>
-                </td>
-                {{/if}}
-            </tr>
+            <td><a href="{{url}}" target="_blank">{{name}}</a></td>
+            <td>{{formatDateTime start_date}}</td>
+            <td>{{location}}</td>
+            <td>{{Topic.name}}</td>
+            <td>{{calculateDeadline start_date}} day</td>
             {{/each}}
-        </tbody>
-    </table>
+        {{/if}}
+        </tr>
+        
+    </tbody>
+</table>
+
     <nav>
     <div>
         {{{createPagination pagination paginationClass="pagination-sm" rightText="Next Page"  leftText="Prev Page"}}}

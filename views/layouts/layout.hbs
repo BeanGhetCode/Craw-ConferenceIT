@@ -19,38 +19,43 @@
   <!-- Navbar -->
   <nav class="navbar navbar-expand-lg navbar-light bg-light">
     <div class="container-fluid">
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <div class="collapse navbar-collapse" id="navbarNav">
-        <ul class="navbar-nav me-auto">
-          <li class="nav-item">
-            <a class="nav-link active" aria-current="page" href="/">Home</a>
-          </li>
-          {{#if isLoggedIn}}
-          <li class="nav-item">
-            <a class="nav-link" href="/user">User</a>
-          </li>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav me-auto">
+                <li class="nav-item">
+                    <a class="nav-link active" aria-current="page" href="/">Home</a>
+                </li>
+                {{#if isLoggedIn}}
+              <li class="nav-item">
+                <a class="nav-link" href="/user">User</a>
+              </li>
           {{/if}}
-        </ul>
-        <ul class="navbar-nav ms-auto">
-          <li class="nav-item d-none" id="welcomeMsg">
-            <span class="navbar-text">Xin chào, <span id="fullname" ></span></span>
-          </li>
-          <li class="nav-item d-none ms-3" id="logoutBtn">
-            <button type="button" class="btn btn-danger">Logout</button>
-          </li>
-          <li class="nav-item" id="loginBtn">
-            <button type="button" class="btn btn-primary me-2" href="/" data-bs-toggle="modal" data-bs-target="#loginModal">Login</button>
-          </li>
-          <li class="nav-item" id="createUserBtn">
-            <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#createUserModal">Create User</button>
-          </li>
-        </ul>
-
-      </div>
+            </ul>
+            <ul class="navbar-nav ms-auto">
+                {{#if isLoggedIn}}
+                <li class="nav-item d-none" id="welcomeMsg">
+                    <span class="navbar-text">Xin chào, <span id="fullname"></span></span>
+                </li>
+                <li class="nav-item" id="logoutBtn">
+                    <form action="/user/logout" method="GET">
+                        <button type="submit" class="btn btn-danger">Logout</button>
+                    </form>
+                </li>
+                {{else}}
+                <li class="nav-item" id="loginBtn">
+                    <button type="button" class="btn btn-primary me-2" href="/" data-bs-toggle="modal" data-bs-target="#loginModal">Login</button>
+                </li>
+                <li class="nav-item" id="createUserBtn">
+                    <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#createUserModal">Create User</button>
+                </li>
+                {{/if}}
+            </ul>
+        </div>
     </div>
-  </nav>
+</nav>
+
 
   <!-- Create User Modal -->
   <div class="modal fade" id="createUserModal" tabindex="-1" aria-labelledby="createUserModalLabel" aria-hidden="true">
@@ -80,18 +85,24 @@
       </div>
     </div>
   </div>
+  <!-- Success alert for user creation -->
+<div id="successCreateUserAlert" class="alert alert-success" style="display: none;" role="alert">
+    User created successfully.
+</div>
 
-  <!-- Success Alert for User Creation -->
-  <div id="successCreateUserAlert" class="alert alert-success alert-dismissible fade show mt-3" role="alert" style="display: none;">
-    User created successfully!
-    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-  </div>
+<!-- Success alert for login -->
+<div id="successLoginAlert" class="alert alert-success" style="display: none;" role="alert">
+    Login successful. Welcome back!
+</div>
 
-  <!-- Success Alert for Login -->
-  <div id="successLoginAlert" class="alert alert-success alert-dismissible fade show mt-3" role="alert" style="display: none;">
-    Logged in successfully!
-    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-  </div>
+<!-- Error alert for login failure -->
+<div id="loginFailedAlert" class="alert alert-danger" style="display: none;" role="alert">
+    Login failed. Please check your email and password.
+</div>
+<!-- Success alert for adding to follow list -->
+<div id="addToFollowListSuccessAlert" class="alert alert-success" style="display: none;" role="alert">
+    Conference added to follow list successfully.
+</div>
 
   <!-- Login Modal -->
 
@@ -105,11 +116,11 @@
         <div class="modal-body">
           <form id="loginForm" action="/user/login" method="post">
             <div class="mb-3">
-              <label for="loginEmail" class="form-label">Email</label>
+              <label for="loginEmail" class="form-label">email</label>
               <input type="email" name="email" class="form-control" id="loginEmail" required>
             </div>
             <div class="mb-3">
-              <label for="loginPassword" class="form-label">Password</label>
+              <label for="loginPassword" class="form-label">password</label>
               <input type="password" name="password" class="form-control" id="loginPassword" required>
             </div>
             <button type="submit" class="btn btn-primary w-100">Login</button>
@@ -121,10 +132,12 @@
 
   <!-- JavaScript -->
   <script>
-  // Wait for DOMContentLoaded event (page has been loaded)
   window.addEventListener('DOMContentLoaded', function() {
     const params = new URLSearchParams(window.location.search);
     const successCreateUser = params.get('successCreateUser');
+    const successLogin = params.get('successLogin');
+    const isLoggedIn = params.get('isLoggedIn');
+    const addToFollowList = params.get('addToFollowList'); // Thêm biến addToFollowList vào đây
     const fullname = params.get('fullname');
 
     // Show success alert for user creation if parameter is present in URL
@@ -133,34 +146,50 @@
     }
 
     // Show success alert for login if parameter is present in URL
-    if (successLogin === 'true' && fullname) {
+    if (successLogin === 'true') {
         document.getElementById('successLoginAlert').style.display = 'block';
-        document.getElementById('loginBtn').classList.add('d-none');
-        document.getElementById('createUserBtn').classList.add('d-none');
-        document.getElementById('logoutBtn').classList.remove('d-none');
-        document.getElementById('welcomeMsg').classList.remove('d-none');
-        document.getElementById('fullname').textContent = fullname;
+    } else if (successLogin === 'false') {
+        document.getElementById('loginFailedAlert').style.display = 'block';
     }
-  });
 
-  // Logout button functionality
-  document.getElementById('logoutBtn').addEventListener('click', function() {
-    // Perform logout actions (e.g., clear session, redirect to login page, etc.)
-    document.getElementById('loginBtn').classList.remove('d-none');
-    document.getElementById('createUserBtn').classList.remove('d-none');
-    document.getElementById('logoutBtn').classList.add('d-none');
-    document.getElementById('welcomeMsg').classList.add('d-none');
+    // Check if user is logged in
+    if (isLoggedIn === 'true') {
+        document.getElementById('welcomeMsg').style.display = 'block';
+        document.getElementById('fullname').innerText = fullname;
+        document.getElementById('logoutBtn').style.display = 'block';
+    } else {
+        document.getElementById('loginBtn').style.display = 'block';
+        document.getElementById('createUserBtn').style.display = 'block';
+    }
+
+    // Show success alert for adding to follow list if parameter is present in URL
+    if (addToFollowList === 'true') {
+        document.getElementById('addToFollowListSuccessAlert').style.display = 'block';
+    }
   });
 </script>
 
+<!-- Success alert for user creation -->
+<div id="successCreateUserAlert" class="alert alert-success" style="display: none;" role="alert">
+    User created successfully.
+</div>
 
-  <!-- Additional HTML content -->
+<!-- Success alert for login -->
+<div id="successLoginAlert" class="alert alert-success" style="display: none;" role="alert">
+    Login successful. Welcome back!
+</div>
 
-  <!-- Conference Filter and Search -->
+<!-- Error alert for login failure -->
+<div id="loginFailedAlert" class="alert alert-danger" style="display: none;" role="alert">
+    Login failed. Please check your email and password.
+</div>
 
-    
-        
-  </div>
+<!-- Success alert for adding to follow list -->
+<div id="addToFollowListSuccessAlert" class="alert alert-success" style="display: none;" role="alert">
+    Conference added to follow list successfully.
+</div>
+
+
 <div>
     {{{body}}}
 </div>

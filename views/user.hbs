@@ -1,43 +1,42 @@
+<!-- user.hbs -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Profile</title>
+    <link rel="stylesheet" href="/path/to/your/css/styles.css">
+</head>
 <body>
     <h1>User Profile</h1>
     <div>
-        <h2>{{ user.fullname }}</h2>
-        <p>Email: {{ user.email }}</p>
+        <h2>{{user.fullname}}</h2>
+        <p>Email: {{user.email}}</p>
     </div>
     <div>
         <h2>Follow List</h2>
         <table id="conferenceTable" class="table">
-        <thead>
-            <tr>
-                <th>Name <a href="?sort=nameAsc">▲</a> <a href="?sort=nameDesc">▼</a></th>
-                <th>Start Date <a href="?sort=dateAsc">▲</a> <a href="?sort=dateDesc">▼</a></th>
-                <th>Location <a href="?sort=locationAsc">▲</a> <a href="?sort=locationDesc">▼</a></th>
-                <th>Topic <a href="?sort=topicAsc">▲</a> <a href="?sort=topicDesc">▼</a></th>
-                <th>Deadline <a href="?sort=deadlineAsc">▲</a> <a href="?sort=deadlineDesc">▼</a></th>
-                <th>Add to Follow List</th>
-            </tr>
-        </thead>
-        <tbody>
-            {{#each conferences}}
-            <tr>
-                <td><a href="{{url}}" target="_blank">{{name}}</a></td>
-                <td>{{formatDateTime start_date}}</td>
-                <td>{{location}}</td>
-                <td>{{Topic.name}}</td>
-                
-                <td>{{calculateDeadline start_date}} day</td>
-                {{#if isLoggedIn}}
-                <td>
-                    <form action="/addToFollowList" method="post">
-                        <input type="hidden" name="conference_id" value="{{id}}">
-                        <input type="hidden" name="user_id" value="{{req.query.id}}">
-                        <button type="submit" class="btn btn-primary">Add</button>
-                    </form>
-                </td>
-                {{/if}}
-            </tr>
-            {{/each}}
-        </tbody>
-    </table>
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Start Date</th>
+                    <th>Location</th>
+                    <th>Topic</th>
+                    <th>Deadline</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{#each FollowLists}}
+                        <tr>
+                            <td><a href="{{url}}" target="_blank">{{Conference.name}}</a></td>
+                            <td>{{formatDateTime Conference.start_date}}</td>
+                            <td>{{Conference.location}}</td>
+                            <td>{{Topic.name}}</td>
+                            <td>{{calculateDeadline Conference.start_date}} days</td>
+                        </tr>
+                {{/each}}
+            </tbody>
+        </table>
     </div>
 </body>
+</html>
