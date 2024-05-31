@@ -52,12 +52,12 @@ def scrape_splunk_topics():
 
 # Connect to PostgreSQL
 conn = psycopg2.connect(
-    dbname="conferenceDB",
-    user="postgres",
-    password="090899",
-    host="localhost",
-    port="5433"
-)
+        dbname="nmcnpm_project_db",
+        user="nmcnpm_project_db",
+        password="jcdfpAasXJYTXoLjsbmFTTtde3PJOWWu",
+        host="dpg-cpcshrtds78s738sc1cg-a.singapore-postgres.render.com",
+        port="5432"
+    )
 cur = conn.cursor()
 
 # Create table if not exists

@@ -1,11 +1,18 @@
 {
   "development": {
-    "username": "postgres",
-    "password": "090899",
-    "database": "conferenceDB",
-    "host": "localhost",
+    "username": "nmcnpm_project_db",
+    "password": "jcdfpAasXJYTXoLjsbmFTTtde3PJOWWu",
+    "database": "nmcnpm_project_db",
+    "host": "dpg-cpcshrtds78s738sc1cg-a.singapore-postgres.render.com",
     "dialect": "postgres",
-    "port": 5433
+    "port": 5432,
+    "dialectOptions": {
+      "ssl": {
+        "require": true,
+        "rejectUnauthorized": false
+      }
+    }
+
   },
   "test": {
     "username": "root",
@@ -15,10 +22,16 @@
     "dialect": "mysql"
   },
   "production": {
-    "username": "root",
-    "password": null,
-    "database": "database_production",
-    "host": "127.0.0.1",
-    "dialect": "mysql"
+    "username": "nmcnpm_project_db",
+    "password": "jcdfpAasXJYTXoLjsbmFTTtde3PJOWWu",
+    "database": "nmcnpm_project_db",
+    "host": "dpg-cpcshrtds78s738sc1cg-a.singapore-postgres.render.com",
+    "dialect": "postgres",
+    "port": 5432,
+    "dialectOptions": {
+      "ssl": {
+        "require": true,
+        "rejectUnauthorized": false
+      }
   }
-}
+  }}

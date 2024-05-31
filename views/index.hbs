@@ -1,34 +1,73 @@
- <div class="container" >
+<div class="container">
+        <form id="filterForm" action="/" method="GET">
+            <div class="row mb-4 align-items-end">
+                <div class="col-md-4">
+                    <label for="topicFilter" class="form-label">Filter by Topic</label>
+                    <select class="form-select" id="topicFilter" name="topic">
+                        <option value="">All Topics</option>
+                        {{#each topics}}
+                            <option value="{{id}}">{{name}}</option>
+                        {{/each}}
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <button type="submit" class="btn btn-primary mt-3">Filter</button>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="container">
+    <form id="searchForm" action="/" method="GET">
+        <div class="row mb-4 align-items-end">
+            <div class="col-md-4">
+                <label for="search" class="form-label">Search Conferences</label>
+                <input type="text" class="form-control" id="search" name="keyword" placeholder="Enter conference name">
+            </div>
+            <div class="col-md-2">
+                <button type="submit" class="btn btn-primary mt-3">Search</button>
+            </div>
+        </div>
+    </form>
+</div>
+   
     <table id="conferenceTable" class="table">
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th>Start Date</th>
-      <th>Location</th>
-      <th>Topic</th>
-      <th>Deadline</th>
-      <th>Add to Follow List</th>
-    </tr>
-  </thead>
-  <tbody>
-    {{#each conferences}}
-    <tr>
-      <td><a href="{{url}}" target="_blank">{{name}}</a></td>
-      <td>{{formatDateTime start_date}}</td>
-      <td>{{location}}</td>
-      <td>{{Topic.name}}</td>
-      <td>{{calculateDeadline start_date}} day</td>
-      <td>
-        <form action="/addToFollowList" method="post">
-          <input type="hidden" name="conference_id" value="{{id}}">
-          <input type="hidden" name="user_id" value="{{req.query.id}}">
-          <button type="submit" class="btn btn-primary">Add</button>
-      </form>
+        <thead>
+            <tr>
+                <th>Name <a href="?sort=nameAsc">▲</a> <a href="?sort=nameDesc">▼</a></th>
+                <th>Start Date <a href="?sort=dateAsc">▲</a> <a href="?sort=dateDesc">▼</a></th>
+                <th>Location <a href="?sort=locationAsc">▲</a> <a href="?sort=locationDesc">▼</a></th>
+                <th>Topic <a href="?sort=topicAsc">▲</a> <a href="?sort=topicDesc">▼</a></th>
+                <th>Deadline <a href="?sort=deadlineAsc">▲</a> <a href="?sort=deadlineDesc">▼</a></th>
+                <th>Add to Follow List</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{#each conferences}}
+            <tr>
+                <td><a href="{{url}}" target="_blank">{{name}}</a></td>
+                <td>{{formatDateTime start_date}}</td>
+                <td>{{location}}</td>
+                <td>{{Topic.name}}</td>
+                
+                <td>{{calculateDeadline start_date}} day</td>
+                {{#if isLoggedIn}}
+                <td>
+                    <form action="/addToFollowList" method="post">
+                        <input type="hidden" name="conference_id" value="{{id}}">
+                        <input type="hidden" name="user_id" value="{{req.query.id}}">
+                        <button type="submit" class="btn btn-primary">Add</button>
+                    </form>
+                </td>
+                {{/if}}
+            </tr>
+            {{/each}}
+        </tbody>
+    </table>
+    <nav>
+    <div>
+        {{{createPagination pagination paginationClass="pagination-sm" rightText="Next Page"  leftText="Prev Page"}}}
+    </div>
+</nav>
 
-      </td>
-    </tr>
-    {{/each}}
-  </tbody>
-</table>
- </div>
+
 
