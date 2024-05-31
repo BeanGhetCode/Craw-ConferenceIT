@@ -31,10 +31,39 @@ controller.showHomepage = async (req, res) => {
         // Xử lý sắp xếp dựa trên tham số sort
         if (sortParam) {
             switch (sortParam) {
-                // Cases for sorting options
+                case 'nameAsc':
+                    queryOptions.order = [['name', 'ASC']];
+                    break;
+                case 'nameDesc':
+                    queryOptions.order = [['name', 'DESC']];
+                    break;
+                case 'dateAsc':
+                    queryOptions.order = [['start_date', 'ASC']];
+                    break;
+                case 'dateDesc':
+                    queryOptions.order = [['start_date', 'DESC']];
+                    break;
+                case 'locationAsc':
+                    queryOptions.order = [['location', 'ASC']];
+                    break;
+                case 'locationDesc':
+                    queryOptions.order = [['location', 'DESC']];
+                    break;
+                case 'topicAsc':
+                    queryOptions.order = [['topic_id', 'ASC']];
+                    break;
+                case 'topicDesc':
+                    queryOptions.order = [['topic_id', 'DESC']];
+                    break;
+                case 'deadlineAsc':
+                    queryOptions.order = [['start_date', 'ASC']];
+                    break;
+                case 'deadlineDesc':
+                    queryOptions.order = [['start_date', 'DESC']];
+                default:
+                    break;
             }
         }
-
         // Thêm điều kiện vào queryOptions nếu có topicId
         if (topicId) {
             queryOptions.where = { topic_id: topicId };
