@@ -4,12 +4,16 @@ const userController = require('../controllers/userController'); // Đảm bảo
 
 // Đăng ký người dùng mới
 router.get('/', userController.User)
+
 router.post('/register', userController.registerUser);
 
-// Route for user login
 router.post('/login', userController.loginUser);
-// Đăng nhập người dùng
+
+router.post('/addToFollowList', userController.addToFollowList);
+
+router.post('/deleteToFollowList', userController.deleteToFollowList);
+
 router.get('/logout', userController.logoutUser);
-//router.get('/',userController.User)
+
 
 module.exports = router;

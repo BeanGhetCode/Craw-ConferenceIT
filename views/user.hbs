@@ -1,18 +1,24 @@
-<!-- user.hbs -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>User Profile</title>
-    <link rel="stylesheet" href="/path/to/your/css/styles.css">
+    <style>
+        h1 {
+            text-align: center;
+            color: #007bff;
+        }
+    </style>
 </head>
 <body>
     <h1>User Profile</h1>
-    <div>
-        <h2>{{user.fullname}}</h2>
-        <p>Email: {{user.email}}</p>
+    <hr> 
+    <div class="container">
+        <h4>Full Name: {{user.fullname}}</h4>
+        <h4>Email: {{user.email}}</h4>
     </div>
+    <hr> 
     <div>
         <h2>Follow List</h2>
         <table id="conferenceTable" class="table">
@@ -23,17 +29,25 @@
                     <th>Location</th>
                     <th>Topic</th>
                     <th>Deadline</th>
+                    <th>Delete from Follow List</th> <!-- Thêm cột mới -->
                 </tr>
             </thead>
             <tbody>
-                {{#each FollowLists}}
-                        <tr>
-                            <td><a href="{{url}}" target="_blank">{{Conference.name}}</a></td>
-                            <td>{{formatDateTime Conference.start_date}}</td>
-                            <td>{{Conference.location}}</td>
-                            <td>{{Topic.name}}</td>
-                            <td>{{calculateDeadline Conference.start_date}} days</td>
-                        </tr>
+                {{#each followLists}}
+                    <tr>
+                        <td><a href="{{Conference.url}}" target="_blank">{{Conference.name}}</a></td>
+                        <td>{{formatDateTime Conference.start_date}}</td>
+                        <td>{{Conference.location}}</td>
+                        <td>{{Conference.Topic.name}}</td>
+                        <td>{{calculateDeadline Conference.start_date}} days</td>
+                        <td> <!-- Chỉ hiển thị nút khi isLoggedIn là true -->
+                            <form action="/user/deleteToFollowList" method="post">
+                                <input type="hidden" name="conference_id" value="{{id}}">
+                                <input type="hidden" name="user_id" value="{{req.query.id}}">
+                                <button type="submit" class="btn btn-danger">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
                 {{/each}}
             </tbody>
         </table>

@@ -52,7 +52,7 @@
             <td>{{calculateDeadline start_date}} day</td>
             
             <td> <!-- Chỉ hiển thị nút khi isLoggedIn là true -->
-                <form action="/addToFollowList" method="post">
+                <form action="/user/addToFollowList" method="post">
                     <input type="hidden" name="conference_id" value="{{id}}">
                     <input type="hidden" name="user_id" value="{{req.query.id}}">
                     <button type="submit" class="btn btn-primary">Add</button>

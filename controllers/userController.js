@@ -1,14 +1,13 @@
 const bcrypt = require('bcrypt');
-const passport = require('passport');
 const models = require('../models');
 const { where } = require('sequelize');
 
 const userController = {};
+
 userController.User = async (req, res) => {
     try {
         // Lấy id người dùng từ session
         let id_user = req.session.user.id;
-
         // Tìm thông tin người dùng
         let user = await models.User.findOne({ where: { id: id_user } });
 
@@ -16,12 +15,22 @@ userController.User = async (req, res) => {
         if (!user) {
             return res.status(404).send('User not found');
         }
-
-        // Lấy danh sách các hội nghị mà người dùng theo dõi
-        let followLists = await models.FollowList.findAll({
-            where: { id_user: id_user },
-            include: [{ model: models.Conference, include: [{ model: models.Topic, attributes: ['name'] }] }]
-        });
+        let options = {
+            include: [
+                {
+                    model: models.Conference,
+                    include: {
+                        model: models.Topic
+                    }
+                }
+            ],
+            where: {
+                id_user: id_user
+            }
+        };
+        
+        
+        let followLists = await models.FollowList.findAll(options);
         
         // Kiểm tra nếu không có FollowList nào được tìm thấy
         if (!followLists || followLists.length === 0) {
@@ -36,7 +45,6 @@ userController.User = async (req, res) => {
         res.status(500).send('Internal Server Error');
     }
 };
-
 
 userController.registerUser = async (req, res) => {
   try {
@@ -86,6 +94,53 @@ userController.loginUser = async (req, res) => {
         }
     });
   };
+userController.addToFollowList = async (req, res) => {
+    try {
+        let id_conference = req.body.conference_id;
+        let userId = req.session.user.id; // Lấy userId từ session
+        console.log(id_conference,userId)
+        // Kiểm tra xem userId có tồn tại hay không
+        if (!userId) {
+            return res.status(400).json({ success: false, message: 'User ID is required' });
+        }
 
+        // Sử dụng userId và conferenceId để thêm vào danh sách theo dõi
+        await models.FollowList.create({
+            id_conference: id_conference,
+            id_user: userId
+        });
+
+        // Redirect hoặc thực hiện hành động tiếp theo
+        res.redirect('/?addToFollowList=true');
+    } catch (error) {
+        console.error('Error adding to follow list:', error);
+        res.status(500).json({ success: false, message: 'An error occurred while adding to follow list' });
+    }
+};
+
+userController.deleteToFollowList = async (req, res) => {
+    try {
+        let id_conference = req.body.conference_id;
+        let id_user = req.session.user.id; // Lấy userId từ session
+        console.log(id_conference,id_user )
+        // Kiểm tra xem userId có tồn tại hay không
+        if (!id_user) {
+            return res.status(400).json({ success: false, message: 'User ID is required' });
+        }
+        
+        // Xóa khỏi danh sách theo dõi
+        await models.FollowList.destroy({
+            where: {
+                id: id_conference,
+                id_user: id_user
+            }
+        });
+        // Redirect về trang người dùng với thông báo thành công
+        res.redirect('/user?deleteToFollowList=true');
+    } catch (error) {
+        console.error('Error deleting from follow list:', error);
+        res.status(500).json({ success: false, message: 'An error occurred while deleting from follow list' });
+    }
+};
 
 module.exports = userController;

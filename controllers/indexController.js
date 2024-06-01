@@ -109,29 +109,5 @@ controller.showHomepage = async (req, res) => {
     }
 };
 
-controller.addToFollowList = async (req, res) => {
-    try {
-        let id_conference = req.body.conference_id;
-        let userId = req.session.user.id; // Lấy userId từ session
-        console.log(id_conference, userId);
-        
-        // Kiểm tra xem userId có tồn tại hay không
-        if (!userId) {
-            return res.status(400).json({ success: false, message: 'User ID is required' });
-        }
-
-        // Sử dụng userId và conferenceId để thêm vào danh sách theo dõi
-        await models.FollowList.create({
-            id_conference: id_conference,
-            id_user: userId
-        });
-
-        // Redirect hoặc thực hiện hành động tiếp theo
-        res.redirect('/?addToFollowList=true');
-    } catch (error) {
-        console.error('Error adding to follow list:', error);
-        res.status(500).json({ success: false, message: 'An error occurred while adding to follow list' });
-    }
-};
 
 module.exports = controller;
